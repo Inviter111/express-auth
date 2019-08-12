@@ -16,7 +16,9 @@ const PORT = config.SERVER.PORT
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use()
+app.use(session({
+  
+}))
 
 app.use((req, res, next) => {
   if (Object.keys(req.body).length === 0) {
