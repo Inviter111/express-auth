@@ -6,6 +6,10 @@ import * as mongo from 'connect-mongo'
 import * as passport from 'passport'
 
 import * as userController from './controllers/userController'
+import * as contractController from './controllers/contractController'
+
+import * as passportUtil from './utils/passport'
+import { permissionMiddleware } from './middleware/permissions'
 
 import config from '../config'
 
@@ -24,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   resave: true,
   saveUninitialized: false,
-  secret: 'very_very_secret',
+  secret: config.SECRET,
   store: new MongoStore({
     url: mongoUrl,
     autoReconnect: true,
@@ -33,14 +37,12 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use((req, res, next) => {
-  if (Object.keys(req.body).length === 0) {
-    return res.send({ 'status': 'error' })
-  }
-  next()
-})
-
 app.post('/login', userController.login)
+app.post('/logout', userController.logout)
+app.post('/contracts', passportUtil.isAuthenticated, permissionMiddleware('create'), contractController.createContract)
+app.get('/contracts', passportUtil.isAuthenticated, permissionMiddleware('view'), contractController.getContracts)
+app.delete('/contracts/:id', passportUtil.isAuthenticated, permissionMiddleware('delete'), contractController.deteleContract)
+app.put('/contracts/:id', passportUtil.isAuthenticated, permissionMiddleware('update'), contractController.updateContract)
 
 async function start() {
   await mongoose.connect(`${mongoUrl}`, {

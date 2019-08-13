@@ -37,4 +37,5 @@ const Users = mongoose.model<UserModel>('Users', UserSchema, 'users')
 export {
   Users,
   UserModel,
+  permissions,
 }
