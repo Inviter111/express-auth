@@ -22,20 +22,23 @@ const UserSchema = new mongoose.Schema({
 type permissions = 'admin' | 'contract_viewer' | 'contract_editor'
 type verifyPasswordFunc = (password: string, cb: (err: any, valid: any) => void) => void
 
-type UserModel = mongoose.Document & {
-  login: string,
-  password: string,
-  permissions: Array<permissions>,
+interface UserModel {
+  login: string
+  password: string
+  permissions: Array<permissions>
 
-  verifyPassword: verifyPasswordFunc
+  verifyPassword?: verifyPasswordFunc
 }
+
+type UserMongoModel = mongoose.Document & UserModel
 
 mongoose.plugin(require('mongoose-bcrypt'))
 
-const Users = mongoose.model<UserModel>('Users', UserSchema, 'users')
+const Users = mongoose.model<UserMongoModel>('Users', UserSchema, 'users')
 
 export {
   Users,
   UserModel,
+  UserMongoModel,
   permissions,
 }

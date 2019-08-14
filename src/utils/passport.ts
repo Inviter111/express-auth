@@ -2,12 +2,12 @@ import * as passport from 'passport'
 import * as passportLocal from 'passport-local'
 import { NextFunction, Request, Response } from 'express';
 
-import { Users, UserModel } from '../models'
+import { Users, UserMongoModel } from '../models'
 
 const LocalStrategy = passportLocal.Strategy
 
 passport.use(new LocalStrategy({ usernameField: 'login' }, (login, password, done) => {
-  Users.findOne({ login }, (err, user?: UserModel) => {
+  Users.findOne({ login }, (err, user?: UserMongoModel) => {
     if (err) return done(err)
     if (!user) {
       return done(null, false, { message: 'Invalid login/password' })
@@ -21,7 +21,7 @@ passport.use(new LocalStrategy({ usernameField: 'login' }, (login, password, don
   })
 }))
 
-passport.serializeUser((user: UserModel, done) => {
+passport.serializeUser((user: UserMongoModel, done) => {
   done(null, user.id)
 })
 

@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
-import * as jwt from 'jsonwebtoken'
 import * as passport from 'passport'
 import { IVerifyOptions } from 'passport-local'
 
-import { UserModel } from '../models'
+import { UserMongoModel } from '../models'
 import '../utils/passport'
 
 export const login = (req: Request, res: Response) => {
-  passport.authenticate('local', (error: Error, user: UserModel, info: IVerifyOptions) => {
+  passport.authenticate('local', (error: Error, user: UserMongoModel, info: IVerifyOptions) => {
     if (error || !user) return res.send({ status: 'error' })
     if (user) {
       req.logIn(user, (err) => {
